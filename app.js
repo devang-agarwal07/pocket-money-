@@ -10,8 +10,8 @@ const DEFAULT_STATE = {
   notifications: true,
   soundEffects: true,
   user: {
-    name: 'Rohan',
-    fullName: 'Rohan Sharma',
+    name: 'Virat',
+    fullName: 'Virat Kohli',
     email: 'rohan.saver@pocketmoney.edu',
     grade: '10th Standard',
     monthlyPocketMoney: 1000,
