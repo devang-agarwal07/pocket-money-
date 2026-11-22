@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocket Money Management - Spend Smart / Save More / Grow Your Future</title>
+  <meta name="description" content="A comprehensive pocket money management single-page application with gamified 30-day savings challenge, 40-40-10-10 rule smart wallet analytics, budget planner, and financial literacy resources." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#2563EB',
+              teal: '#0D9488',
+              cyan: '#06B6D4',
+              mint: '#10B981',
+              coral: '#F43F5E',
+              gold: '#F59E0B'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            display: ['Fredoka', '"Plus Jakarta Sans"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300 selection:bg-blue-500 selection:text-white theme-gradient-light dark:theme-gradient-dark">
+
+  <!-- Floating Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full"></div>
+
+  <!-- Reusable SVG Mascots & Symbols Defs -->
+  <svg class="hidden">
+    <defs>
+      <!-- Piggy Bank Mascot Vector Symbol -->
+      <g id="piggy-mascot-def">
+        <!-- Coin Slot & Golden Rupee Coin -->
+        <g class="animate-float-slow">
+          <ellipse cx="65" cy="18" rx="14" ry="14" fill="#FBBF24" stroke="#D97706" stroke-width="2.5" />
+          <ellipse cx="65" cy="18" rx="10.5" ry="10.5" fill="none" stroke="#FEF08A" stroke-width="1.2" />
+          <text x="65" y="23" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="bold" font-size="14" fill="#78350F">₹</text>
+        </g>
+        <rect x="52" y="32" width="26" height="4" rx="2" fill="#BE185D" />
+
+        <!-- Piggy Body -->
+        <ellipse cx="65" cy="72" rx="46" ry="36" fill="#F472B6" stroke="#DB2777" stroke-width="3" />
+        
+        <!-- Piggy Belly Highlight -->
+        <ellipse cx="62" cy="78" rx="34" ry="24" fill="#FBCFE8" opacity="0.6" />
+
+        <!-- Floppy Ears -->
+        <path d="M34 44 C26 26 18 36 28 50 Z" fill="#EC4899" stroke="#DB2777" stroke-width="2.5" />
+        <path d="M32 43 C28 32 24 38 29 46 Z" fill="#F472B6" />
+        <path d="M96 44 C104 26 112 36 102 50 Z" fill="#EC4899" stroke="#DB2777" stroke-width="2.5" />
+        <path d="M98 43 C102 32 106 38 101 46 Z" fill="#F472B6" />
+
+        <!-- Curly Tail -->
+        <path d="M110 74 Q124 72 120 62 Q115 54 125 54" fill="none" stroke="#DB2777" stroke-width="3.5" stroke-linecap="round" />
+
+        <!-- Feet / Hooves -->
+        <rect x="36" y="98" width="14" height="12" rx="6" fill="#DB2777" />
+        <rect x="78" y="98" width="14" height="12" rx="6" fill="#DB2777" />
+
+        <!-- Cute Eyes -->
+        <circle cx="48" cy="62" r="4.5" fill="#1E293B" />
+        <circle cx="50" cy="60.5" r="1.5" fill="#FFFFFF" />
+        <circle cx="82" cy="62" r="4.5" fill="#1E293B" />
+        <circle cx="84" cy="60.5" r="1.5" fill="#FFFFFF" />
+
+        <!-- Rosy Cheeks -->
+        <ellipse cx="38" cy="70" rx="6" ry="4" fill="#F43F5E" opacity="0.45" />
+        <ellipse cx="92" cy="70" rx="6" ry="4" fill="#F43F5E" opacity="0.45" />
+
+        <!-- Piggy Snout -->
+        <ellipse cx="65" cy="69" rx="15" ry="11" fill="#F9A8D4" stroke="#DB2777" stroke-width="2.5" />
+        <ellipse cx="59.5" cy="69" rx="3" ry="4" fill="#9D174D" />
+        <ellipse cx="70.5" cy="69" rx="3" ry="4" fill="#9D174D" />
+
+        <!-- Smile Under Snout -->
+        <path d="M57 84 Q65 91 73 84" fill="none" stroke="#DB2777" stroke-width="2.5" stroke-linecap="round" />
+      </g>
+
+      <!-- Money Jar with Signpost Vector Symbol -->
+      <g id="jar-signpost-mascot-def">
+        <!-- Wooden Signpost -->
+        <rect x="135" y="30" width="8" height="95" rx="3" fill="#B45309" stroke="#78350F" stroke-width="2" />
+
+        <!-- Sign Arrow 1: Save -->
+        <g class="animate-pulse-gentle" style="animation-delay: 0.2s">
+          <path d="M138 32 L190 32 L198 42 L190 52 L138 52 Z" fill="#10B981" stroke="#047857" stroke-width="2" />
+          <text x="165" y="46" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="bold" font-size="11" fill="#FFFFFF">SAVE</text>
+        </g>
+
+        <!-- Sign Arrow 2: Plan -->
+        <g class="animate-pulse-gentle" style="animation-delay: 0.6s">
+          <path d="M140 58 L92 58 L84 68 L92 78 L140 78 Z" fill="#0284C7" stroke="#0369A1" stroke-width="2" />
+          <text x="114" y="72" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="bold" font-size="11" fill="#FFFFFF">PLAN</text>
+        </g>
+
+        <!-- Sign Arrow 3: Spend Wisely -->
+        <g class="animate-pulse-gentle" style="animation-delay: 1.0s">
+          <path d="M138 84 L204 84 L212 94 L204 104 L138 104 Z" fill="#0D9488" stroke="#115E59" stroke-width="2" />
+          <text x="171" y="97" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="bold" font-size="9.5" fill="#FFFFFF">SPEND WISELY</text>
+        </g>
+
+        <!-- Glass Jar Body -->
+        <rect x="25" y="38" width="80" height="84" rx="24" fill="#E0F2FE" fill-opacity="0.75" stroke="#38BDF8" stroke-width="3" />
+        <ellipse cx="65" cy="38" rx="32" ry="7" fill="#BAE6FD" stroke="#38BDF8" stroke-width="2" />
+
+        <!-- Cork Stopper -->
+        <path d="M42 38 L45 25 L85 25 L88 38 Z" fill="#D97706" stroke="#92400E" stroke-width="2" />
+        <ellipse cx="65" cy="25" rx="20" ry="4" fill="#F59E0B" />
+
+        <!-- Golden Coins Inside Jar -->
+        <ellipse cx="50" cy="104" rx="14" ry="7" fill="#FBBF24" stroke="#D97706" stroke-width="1.5" />
+        <ellipse cx="78" cy="106" rx="15" ry="7.5" fill="#F59E0B" stroke="#B45309" stroke-width="1.5" />
+        <ellipse cx="62" cy="98" rx="14" ry="7" fill="#FBBF24" stroke="#D97706" stroke-width="1.5" />
+        <ellipse cx="48" cy="92" rx="12" ry="6" fill="#FCD34D" stroke="#D97706" stroke-width="1.2" />
+        <ellipse cx="76" cy="94" rx="13" ry="6.5" fill="#FBBF24" stroke="#D97706" stroke-width="1.2" />
+        <ellipse cx="63" cy="88" rx="12" ry="6" fill="#FEF08A" stroke="#D97706" stroke-width="1.2" />
+
+        <!-- Kawaii Cartoon Face on Jar -->
+        <!-- Eyes -->
+        <circle cx="52" cy="62" r="5" fill="#0F172A" />
+        <circle cx="54" cy="60" r="1.8" fill="#FFFFFF" />
+        <circle cx="78" cy="62" r="5" fill="#0F172A" />
+        <circle cx="80" cy="60" r="1.8" fill="#FFFFFF" />
+
+        <!-- Cheerful Smile -->
+        <path d="M57 70 Q65 80 73 70" fill="#EF4444" stroke="#991B1B" stroke-width="1.5" />
+        <path d="M57 70 Q65 74 73 70 Z" fill="#FFFFFF" />
+
+        <!-- Rosy Cheeks -->
+        <circle cx="43" cy="68" r="5.5" fill="#F43F5E" opacity="0.4" />
+        <circle cx="87" cy="68" r="5.5" fill="#F43F5E" opacity="0.4" />
+
+        <!-- Jar Glass Highlights -->
+        <path d="M33 50 Q30 75 34 100" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+        <path d="M96 50 Q98 75 95 100" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" opacity="0.4" />
+      </g>
+    </defs>
+  </svg>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-white/50 dark:border-slate-800 transition-colors shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo & Brand Mascot -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="App.switchView('home')">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-teal-400 p-1 flex items-center justify-center shadow-lg transform hover:scale-105 transition">
+            <svg viewBox="0 0 130 115" class="w-10 h-10">
+              <use href="#piggy-mascot-def" />
+            </svg>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-teal-500 dark:from-sky-400 dark:to-teal-300 bg-clip-text text-transparent">
+              Pocket Money
+            </span>
+            <span class="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 ml-1.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300 uppercase tracking-wider">
+              Smart App
+            </span>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 -mt-0.5 tracking-tight hidden sm:block">Spend Smart • Save More • Grow Future</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Items (All Views Accessible) -->
+        <nav class="hidden xl:flex items-center space-x-1 lg:space-x-1.5">
+          <button data-nav-target="home" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-active">
+            Home
+          </button>
+          <button data-nav-target="dashboard" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            Dashboard
+          </button>
+          <button data-nav-target="budget" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            Budget
+          </button>
+          <button data-nav-target="challenge" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            Challenge
+          </button>
+          <button data-nav-target="faq" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            FAQ
+          </button>
+          <button data-nav-target="team" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            About
+          </button>
+          <button data-nav-target="profile" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            Profile
+          </button>
+          <button data-nav-target="contact" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            Contact
+          </button>
+          <button data-nav-target="blog" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition nav-link-inactive">
+            Blog
+          </button>
+        </nav>
+
+        <!-- Right Side Controls: Dark Mode, Audio, User Profile -->
+        <div class="flex items-center space-x-3">
+          
+          <!-- Quick Dark Mode Toggle -->
+          <button id="theme-toggle-btn" class="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-yellow-400 transition shadow-inner focus:outline-none" title="Toggle Dark/Light Mode">
+            <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          </button>
+
+          <!-- Profile / Sign In Pill (Switches to Profile View) -->
+          <button onclick="App.switchView('profile')" class="flex items-center space-x-2.5 pl-2 pr-3.5 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-semibold text-sm shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+            <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs uppercase border border-white/40">
+              R
+            </div>
+            <span class="hidden sm:inline">Rohan</span>
+            <span class="bg-white/25 px-2 py-0.5 rounded-full text-xs font-bold text-white">₹1,000</span>
+          </button>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button id="mobile-menu-btn" class="xl:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="hidden xl:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-1 shadow-2xl">
+      <div class="grid grid-cols-3 gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800 text-center">
+        <button onclick="App.switchView('home')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">🏠 Home</button>
+        <button onclick="App.switchView('dashboard')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">📊 Dashboard</button>
+        <button onclick="App.switchView('budget')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">💳 Budget</button>
+        <button onclick="App.switchView('challenge')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">🎯 Challenge</button>
+        <button onclick="App.switchView('faq')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">❓ FAQ</button>
+        <button onclick="App.switchView('team')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">👥 Team</button>
+        <button onclick="App.switchView('contact')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">✉️ Contact</button>
+        <button onclick="App.switchView('profile')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">⚙️ Profile</button>
+        <button onclick="App.switchView('blog')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">📚 Blog</button>
+      </div>
+      <div class="flex items-center justify-between px-2 pt-1">
+        <span class="text-xs font-semibold text-slate-500">Dark Mode</span>
+        <button onclick="App.toggleDarkMode()" class="text-xs font-bold text-blue-600 dark:text-sky-400">Toggle Theme</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive 9-View Direct Quick Switcher (Always Accessible) -->
+  <aside class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+    <div class="flex items-center justify-between p-2 rounded-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-white/50 dark:border-slate-800 overflow-x-auto shadow-sm text-xs font-semibold space-x-1.5 scrollbar-thin">
+      <span class="text-slate-400 dark:text-slate-500 px-2 flex-shrink-0 font-bold uppercase tracking-wider text-[10px]">
+        Views:
+      </span>
+      <button data-view="home" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">1. Home</button>
+      <button data-view="dashboard" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">2. Dashboard</button>
+      <button data-view="budget" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">3. Budget</button>
+      <button data-view="challenge" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">4. Challenge</button>
+      <button data-view="faq" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">5. FAQ</button>
+      <button data-view="team" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">6. Team</button>
+      <button data-view="contact" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">7. Contact</button>
+      <button data-view="profile" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">8. Profile</button>
+      <button data-view="blog" class="view-switcher-btn px-3 py-1.5 rounded-xl whitespace-nowrap transition">9. Blog</button>
+    </div>
+  </aside>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: HOME LANDING PAGE                   -->
+    <!-- ========================================== -->
+    <section id="view-home" class="transition-opacity duration-300">
+      
+      <!-- Hero Card -->
+      <div class="card-glass rounded-3xl p-6 sm:p-10 lg:p-14 mb-8 shadow-2xl relative overflow-hidden">
+        <!-- Background Ambient Glow -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-teal-400/20 dark:bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/20 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          
+          <!-- Hero Text Content -->
+          <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-sky-300 text-xs sm:text-sm font-bold tracking-wide">
+              <span>🌟</span>
+              <span>Pocket Money Management Made Fun</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight font-display">
+              Spend Smart / <br class="hidden sm:inline" />
+              <span class="bg-gradient-to-r from-blue-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">
+                Save More
+              </span>
+            </h1>
+
+            <p class="text-lg sm:text-xl font-medium text-slate-700 dark:text-slate-200">
+              The easy way to manage your pocket money
+            </p>
+
+            <!-- Tagline Badge -->
+            <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-teal-50 dark:from-slate-800 dark:to-slate-800/80 border-l-4 border-teal-500 shadow-sm">
+              <p class="text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-300 italic">
+                “Spend Smart / Save More / Grow Your Future - Little Steps... Big Dreams!”
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+              <button onclick="App.switchView('dashboard')" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-extrabold text-base shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center space-x-2">
+                <span>Get Started</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+              <button onclick="App.switchView('challenge')" class="px-6 py-4 rounded-2xl bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-bold text-base border border-slate-200 dark:border-slate-600 shadow-md transition flex items-center space-x-2">
+                <span>🎯 30-Day Challenge</span>
+              </button>
+            </div>
+
+            <!-- Quick Mini Stats -->
+            <div class="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/60 max-w-md mx-auto lg:mx-0 text-center">
+              <div>
+                <p class="text-xl sm:text-2xl font-black text-blue-600 dark:text-sky-400 font-display">₹1,000</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Standard Budget</p>
+              </div>
+              <div>
+                <p class="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-display">40-40-10</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Smart Allocation</p>
+              </div>
+              <div>
+                <p class="text-xl sm:text-2xl font-black text-amber-500 font-display">30 Days</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">₹20 Micro Streak</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Hero Mascots & Visual Illustration -->
+          <div class="lg:col-span-5 relative flex items-center justify-center">
+            <div class="relative w-full max-w-md p-6 bg-gradient-to-b from-blue-50/60 to-teal-50/60 dark:from-slate-800/80 dark:to-slate-800/40 rounded-3xl border border-white/60 dark:border-slate-700 shadow-xl">
+              
+              <!-- Floating Card Asset -->
+              <div class="absolute -top-4 -left-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3.5 py-2 rounded-2xl shadow-lg flex items-center space-x-2 animate-float-slow text-xs font-bold">
+                <span>💳 Smart Wallet</span>
+                <span class="text-teal-300">₹ Active</span>
+              </div>
+
+              <!-- Floating Trophy -->
+              <div class="absolute -top-3 -right-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white p-2.5 rounded-2xl shadow-lg animate-float-reverse">
+                <span class="text-lg">🏆</span>
+              </div>
+
+              <!-- Main Illustration SVG combining Happy Money Jar and Smiling Piggy Bank -->
+              <svg viewBox="0 0 320 220" class="w-full h-auto">
+                <!-- Happy Money Jar Mascot Holding Signpost -->
+                <g transform="translate(10, 15) scale(0.95)">
+                  <use href="#jar-signpost-mascot-def" />
+                </g>
+
+                <!-- Smiling Piggy Bank Mascot with Rupee Coin -->
+                <g transform="translate(180, 75) scale(0.85)">
+                  <use href="#piggy-mascot-def" />
+                </g>
+
+                <!-- Floating Confetti & Sparkles -->
+                <circle cx="150" cy="40" r="3" fill="#38BDF8" class="animate-pulse-gentle" />
+                <circle cx="280" cy="50" r="3.5" fill="#FBBF24" class="animate-pulse-gentle" />
+                <circle cx="40" cy="160" r="2.5" fill="#10B981" />
+              </svg>
+
+              <!-- Mascot Captions -->
+              <div class="mt-2 text-center">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">
+                  Meet our Mascots: <span class="text-blue-600 dark:text-sky-400">Jarvy</span> (Signpost Jar) & <span class="text-pink-500">Penny</span> (Rupee Piggy)!
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3 Feature Highlight Cards (Directly Matching Screenshot) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Feature 1: Responsibility -->
+        <div class="card-glass rounded-3xl p-6 shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 border-t-4 border-blue-500">
+          <div class="flex items-center space-x-4 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 flex items-center justify-center text-2xl shadow-sm">
+              🍽️
+            </div>
+            <div>
+              <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Responsibility</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Accountability & Discipline</p>
+            </div>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+            Gain mastery over everyday pocket expenses. Learn to track daily snacks, stationery, and travel without asking for extra mid-month cash.
+          </p>
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
+            <span class="font-bold text-blue-600 dark:text-sky-400">Learn Budgeting</span>
+            <button onclick="App.switchView('budget')" class="text-slate-400 hover:text-blue-600 dark:hover:text-sky-400 font-semibold">View Planner →</button>
+          </div>
+        </div>
+
+        <!-- Feature 2: Build saving habits -->
+        <div class="card-glass rounded-3xl p-6 shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 border-t-4 border-emerald-500">
+          <div class="flex items-center space-x-4 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-2xl shadow-sm">
+              🐷
+            </div>
+            <div>
+              <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Build saving habits</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Consistency Compounds</p>
+            </div>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+            Little steps create big dreams! Stashing just ₹20 every day transforms small pocket allowances into massive milestone funds for gadgets and books.
+          </p>
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400">30-Day Streak</span>
+            <button onclick="App.switchView('challenge')" class="text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold">Start Tracker →</button>
+          </div>
+        </div>
+
+        <!-- Feature 3: Improve decision-making -->
+        <div class="card-glass rounded-3xl p-6 shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 border-t-4 border-teal-500">
+          <div class="flex items-center space-x-4 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-300 flex items-center justify-center text-2xl shadow-sm">
+              📈
+            </div>
+            <div>
+              <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Improve decision-making</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Needs vs. Wants Clarity</p>
+            </div>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+            Apply the 40-40-10-10 financial rule early in life. Separate essential school needs from lifestyle desires and learn the joy of giving back.
+          </p>
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
+            <span class="font-bold text-teal-600 dark:text-teal-400">Smart 40-40 Rule</span>
+            <button onclick="App.switchView('dashboard')" class="text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 font-semibold">See Analytics →</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: DASHBOARD                          -->
+    <!-- ========================================== -->
+    <section id="view-dashboard" class="hidden transition-opacity duration-300">
+      
+      <!-- Dashboard Top Header Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-sky-300 text-xs font-bold mb-1">
+            <span>📊 Live Overview</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">Dashboard</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Smart Wallet Analytics & Recent Pocket Money Activity</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="App.adjustPocketMoneyPrompt()" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 font-bold text-sm shadow-sm transition">
+            ✏️ Change Pocket Money (₹<span id="dash-total-budget">1000</span>)
+          </button>
+          <button onclick="App.openAddTransactionModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-bold text-sm shadow-md transition flex items-center space-x-1.5">
+            <span>+ Add Transaction</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Side: Smart Wallet Analytics Card with Donut Chart (40-40-10-10 Rule) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="card-glass rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+            
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-700/60">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-lg">
+                  🪙
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-slate-900 dark:text-white">Smart Wallet Analytics</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Golden 40-40-10-10 Rule on ₹1,000 Pocket Money</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+                Balanced Health
+              </span>
+            </div>
+
+            <!-- Donut Chart & Mascot Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+              
+              <!-- Donut Chart SVG -->
+              <div class="relative flex items-center justify-center">
+                <svg id="donut-chart-svg" viewBox="0 0 200 200" class="w-56 h-56 transform -rotate-90">
+                  <!-- Injected dynamically via JS -->
+                </svg>
+                <!-- Center Label of Donut Chart -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                  <span id="chart-center-sub" class="text-xs font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Savings (40%)</span>
+                  <span id="chart-center-title" class="text-2xl font-black text-slate-900 dark:text-white font-display">₹400</span>
+                  <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">Rule Healthy</span>
+                </div>
+              </div>
+
+              <!-- Mascot Card & Explanations -->
+              <div class="space-y-4">
+                <div class="p-4 rounded-2xl bg-blue-50/70 dark:bg-slate-700/50 border border-blue-100 dark:border-slate-600 flex items-center space-x-3">
+                  <svg viewBox="0 0 220 130" class="w-20 h-16 flex-shrink-0">
+                    <use href="#jar-signpost-mascot-def" />
+                  </svg>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-sky-300">The 40-40-10-10 Formula</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-tight mt-1">
+                      Save 40%, spend 40% on essentials, invest 10% in skills, donate 10% to kindness!
+                    </p>
+                  </div>
+                </div>
+
+                <div class="space-y-2 text-xs font-semibold">
+                  <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                      <span>40% Savings Fund</span>
+                    </div>
+                    <span id="dash-save-amount" class="font-extrabold">₹400</span>
+                  </div>
+
+                  <div class="flex items-center justify-between p-2 rounded-xl bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                      <span>40% Daily Spending</span>
+                    </div>
+                    <span id="dash-spend-amount" class="font-extrabold">₹400</span>
+                  </div>
+
+                  <div class="flex items-center justify-between p-2 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                      <span>10% Knowledge & Skill Invest</span>
+                    </div>
+                    <span id="dash-invest-amount" class="font-extrabold">₹100</span>
+                  </div>
+
+                  <div class="flex items-center justify-between p-2 rounded-xl bg-purple-50 dark:bg-purple-950/30 text-purple-800 dark:text-purple-300">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+                      <span>10% Giving & Kindness</span>
+                    </div>
+                    <span id="dash-donate-amount" class="font-extrabold">₹100</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Bottom 4 Category Action Pills -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 mt-6 border-t border-slate-100 dark:border-slate-700/60 text-center">
+              <button onclick="App.switchView('budget')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-700/50 hover:bg-emerald-50 dark:hover:bg-slate-600 transition border border-slate-200 dark:border-slate-600">
+                <span class="text-xl">🐷</span>
+                <p class="text-xs font-bold text-slate-800 dark:text-white mt-1">Savings</p>
+                <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">₹300 Target</p>
+              </button>
+
+              <button onclick="App.switchView('budget')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-700/50 hover:bg-orange-50 dark:hover:bg-slate-600 transition border border-slate-200 dark:border-slate-600">
+                <span class="text-xl">🍔</span>
+                <p class="text-xs font-bold text-slate-800 dark:text-white mt-1">Food</p>
+                <p class="text-[10px] text-orange-600 dark:text-orange-400 font-semibold">₹200 Target</p>
+              </button>
+
+              <button onclick="App.switchView('challenge')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-700/50 hover:bg-amber-50 dark:hover:bg-slate-600 transition border border-slate-200 dark:border-slate-600">
+                <span class="text-xl">🎯</span>
+                <p class="text-xs font-bold text-slate-800 dark:text-white mt-1">Challenge</p>
+                <p class="text-[10px] text-amber-600 font-semibold">₹20 / Day</p>
+              </button>
+
+              <button onclick="App.switchView('budget')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-slate-600 transition border border-slate-200 dark:border-slate-600">
+                <span class="text-xl">🩹</span>
+                <p class="text-xs font-bold text-slate-800 dark:text-white mt-1">Emergency</p>
+                <p class="text-[10px] text-rose-600 font-semibold">₹100 Buffer</p>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right Side: Recent Transactions List -->
+        <div class="lg:col-span-5">
+          <div class="card-glass rounded-3xl p-6 shadow-xl h-full flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700/60 mb-4">
+                <div>
+                  <h3 class="text-xl font-bold text-slate-900 dark:text-white">Recent Transactions</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">All inflows, canteen spends, and deposits</p>
+                </div>
+                <button onclick="App.openAddTransactionModal()" class="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
+                  + Add New
+                </button>
+              </div>
+
+              <!-- Filter Tags -->
+              <div class="flex items-center space-x-1 mb-4 overflow-x-auto text-xs pb-1 font-semibold">
+                <button onclick="App.renderTransactions('all')" class="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-sky-300">All</button>
+                <button onclick="App.renderTransactions('expense')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Expense</button>
+                <button onclick="App.renderTransactions('income')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Income</button>
+                <button onclick="App.renderTransactions('savings')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Savings</button>
+              </div>
+
+              <!-- Transactions Scrollable List -->
+              <div id="transactions-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- Card Bottom Hint with Piggy Mascot -->
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs text-slate-500">
+              <div class="flex items-center space-x-2">
+                <svg viewBox="0 0 130 115" class="w-7 h-7">
+                  <use href="#piggy-mascot-def" />
+                </svg>
+                <span>Tap any row trash icon to remove.</span>
+              </div>
+              <button onclick="App.switchView('budget')" class="font-bold text-blue-600 dark:text-sky-400 hover:underline">
+                View Budgets →
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: BUDGET PLANNER                     -->
+    <!-- ========================================== -->
+    <section id="view-budget" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 text-xs font-bold mb-1">
+            <span>💳 Category Allocations</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">Budget Planner</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Interactive spending envelopes with color-coded progress meters</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="App.resetBudgetDefaults()" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-bold text-sm shadow-sm hover:bg-slate-50 transition">
+            🔄 Reset Defaults
+          </button>
+          <button onclick="App.openAddTransactionModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-bold text-sm shadow-md transition flex items-center space-x-1.5">
+            <span>+ Log Expense</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Budget Planner Card (Matching Top-Right Screenshot Exactly) -->
+      <div class="card-glass rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+        
+        <!-- Ambient Decorative Piggy Mascot in Corner -->
+        <div class="absolute right-4 bottom-2 opacity-20 lg:opacity-30 pointer-events-none">
+          <svg viewBox="0 0 130 115" class="w-48 h-48">
+            <use href="#piggy-mascot-def" />
+          </svg>
+        </div>
+
+        <!-- Budget Summary Header Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div class="p-4 rounded-2xl bg-blue-50/80 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Total Pocket Budget</p>
+            <p id="budget-total-sum" class="text-2xl font-black text-blue-600 dark:text-sky-400 font-display">₹1,000</p>
+            <p class="text-[11px] text-slate-500">Allocated across 5 envelopes</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-50/80 dark:bg-slate-800/80 border border-amber-100 dark:border-slate-700">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Total Amount Spent</p>
+            <p id="budget-spent-sum" class="text-2xl font-black text-amber-600 font-display">₹760</p>
+            <p class="text-[11px] text-slate-500">Current month expenses</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/80 dark:bg-slate-800/80 border border-emerald-100 dark:border-slate-700">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Remaining Safe Buffer</p>
+            <p id="budget-remain-sum" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-display">₹240</p>
+            <p class="text-[11px] text-emerald-600 font-semibold">Available to save/spend</p>
+          </div>
+        </div>
+
+        <!-- Category Progress Bars (Food ₹200, Entertainment ₹150, School Supplies ₹250, Savings ₹300, Emergency ₹100) -->
+        <div class="space-y-4 relative z-10" id="budget-categories-list">
+          <!-- Rendered dynamically by App.renderBudgetPlanner() -->
+        </div>
+
+        <!-- Budget Wisdom Tip Banner -->
+        <div class="mt-8 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-teal-50 dark:from-slate-700/60 dark:to-slate-700/30 border border-blue-200 dark:border-slate-600 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">💡</span>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">
+              <strong class="font-bold text-slate-900 dark:text-white">Smart Saving Tip:</strong> If you don't spend your full Emergency buffer (₹100), roll it directly into your 30-Day Savings Challenge!
+            </p>
+          </div>
+          <button onclick="App.switchView('challenge')" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs whitespace-nowrap shadow-sm ml-4">
+            Go to Challenge →
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: SMART MONEY CHALLENGE              -->
+    <!-- ========================================== -->
+    <section id="view-challenge" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold mb-1">
+            <span>🎯 Gamified Savings Tracker</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">Smart Money Challenge</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Save ₹20 every day for 30 days & watch your Money Tree blossom to ₹600!</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="App.checkNextChallengeDay()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-md transition flex items-center space-x-1.5">
+            <span>✅ Check Next Day (₹20)</span>
+          </button>
+          <button onclick="App.resetChallenge()" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-bold text-sm shadow-sm hover:bg-slate-50 transition">
+            🔄 Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Challenge Grid & Money Tree Split Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: 30-Day Checkboxes Grid (6x5 Grid of ₹20 items) -->
+        <div class="lg:col-span-8">
+          <div class="card-glass rounded-3xl p-6 sm:p-8 shadow-xl">
+            
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-700/60">
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">30-Day Savings Tracker</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Click any day circle to toggle your ₹20 deposit</p>
+              </div>
+              <div class="text-right">
+                <span id="challenge-completed-days" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+                  7 of 30 Days
+                </span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-6 space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold">
+                <span class="text-slate-600 dark:text-slate-300">Target Progress</span>
+                <span id="challenge-progress-percent" class="text-emerald-600 dark:text-emerald-400 font-black">23%</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-4 rounded-full overflow-hidden p-0.5">
+                <div id="challenge-progress-bar" class="h-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-600 rounded-full transition-all duration-500" style="width: 23%;"></div>
+              </div>
+            </div>
+
+            <!-- The 30 Interactive Clickable Day Circles (6 Columns on Desktop) -->
+            <div id="challenge-days-grid" class="grid grid-cols-5 sm:grid-cols-6 gap-3">
+              <!-- Dynamically generated 30 buttons via JS -->
+            </div>
+
+            <!-- Footer Mascot Note -->
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <svg viewBox="0 0 130 115" class="w-10 h-10 flex-shrink-0 animate-pulse-gentle">
+                  <use href="#piggy-mascot-def" />
+                </svg>
+                <p class="text-xs text-slate-600 dark:text-slate-300">
+                  Penny says: <em>"Consistency beats intensity! Keep your daily ₹20 streak alive!"</em>
+                </p>
+              </div>
+              <button onclick="App.checkNextChallengeDay()" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
+                Deposit Today →
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Money Tree Visual & Dynamic Total Saved -->
+        <div class="lg:col-span-4">
+          <div class="card-glass rounded-3xl p-6 sm:p-8 shadow-xl text-center h-full flex flex-col justify-between">
+            
+            <div>
+              <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 text-xs font-bold mb-3">
+                <span>🌳 Growing Money Tree</span>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white">Your Money Tree</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Tree grows bigger as days get checked!</p>
+
+              <!-- Dynamic Interactive Tree Stage Illustration Container -->
+              <div id="money-tree-stage" class="my-2 min-h-[220px] flex items-center justify-center">
+                <!-- Injected via updateMoneyTreeStage() in JS -->
+              </div>
+
+              <!-- Tree Growth Stage Badge -->
+              <div class="mt-2">
+                <span id="tree-stage-badge" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-emerald-50 dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-slate-600">
+                  Stage 2: Growing Sapling 🌿
+                </span>
+              </div>
+            </div>
+
+            <!-- Total Savings Display (Matching ₹600 Target from Screenshot) -->
+            <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700/60 bg-gradient-to-b from-transparent to-emerald-50/50 dark:to-emerald-950/20 p-4 rounded-2xl">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Savings Accumulated</p>
+              <div class="text-4xl font-black text-emerald-600 dark:text-emerald-400 font-display my-1" id="challenge-total-saved">
+                ₹140
+              </div>
+              <p class="text-xs font-semibold text-slate-500">Target Goal: <span class="font-extrabold text-slate-800 dark:text-white">₹600</span> in 30 days</p>
+
+              <button onclick="App.addQuickSavings()" class="mt-4 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition">
+                + Deposit Extra Rupee
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: FREQUENTLY ASKED QUESTIONS (FAQ)   -->
+    <!-- ========================================== -->
+    <section id="view-faq" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-sky-300 text-xs font-bold mb-1">
+            <span>❓ Frequently Asked Questions</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">FAQ & Guides</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Learn why pocket money management matters and how to maximize every Rupee</p>
+        </div>
+        <div class="w-full sm:w-72">
+          <!-- FAQ Search Input -->
+          <div class="relative">
+            <input
+              id="faq-search-input"
+              type="text"
+              placeholder="Search questions..."
+              class="w-full px-4 py-2.5 pl-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white shadow-sm"
+            />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Card with Accordion List & Side Mascots -->
+      <div class="card-glass rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <!-- Accordion Questions Column (Questions from Request) -->
+          <div class="lg:col-span-8 space-y-4" id="faq-list">
+            
+            <!-- Question 1: What is pocket money? -->
+            <div class="faq-item rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 overflow-hidden shadow-sm transition hover:shadow-md">
+              <button onclick="App.toggleFaq(1)" class="w-full p-4 sm:p-5 text-left flex items-center justify-between font-bold text-slate-800 dark:text-white focus:outline-none">
+                <span class="flex items-center space-x-3 text-base">
+                  <span class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-sky-300 flex items-center justify-center text-sm font-black">1</span>
+                  <span>What is pocket money?</span>
+                </span>
+                <svg id="faq-arrow-1" class="w-5 h-5 text-slate-400 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="faq-answer-1" class="px-5 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60">
+                Pocket money is a regular, predetermined financial allowance given to children, teenagers, and students by parents or guardians. It is not just extra cash to burn—it serves as a safe practical sandbox to understand budgeting, spending trade-offs, and saving fundamentals before entering adulthood.
+              </div>
+            </div>
+
+            <!-- Question 2: Why is management important? -->
+            <div class="faq-item rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 overflow-hidden shadow-sm transition hover:shadow-md">
+              <button onclick="App.toggleFaq(2)" class="w-full p-4 sm:p-5 text-left flex items-center justify-between font-bold text-slate-800 dark:text-white focus:outline-none">
+                <span class="flex items-center space-x-3 text-base">
+                  <span class="w-8 h-8 rounded-lg bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-300 flex items-center justify-center text-sm font-black">2</span>
+                  <span>Why is management important?</span>
+                </span>
+                <svg id="faq-arrow-2" class="w-5 h-5 text-slate-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="faq-answer-2" class="hidden px-5 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60">
+                Without management, allowances disappear within the first 3 days on impulse snacks or gaming items, leaving nothing for the rest of the month. Managing money teaches you discipline, prevents financial regret, eliminates begging stress, and trains the brain to appreciate the real value of hard-earned money.
+              </div>
+            </div>
+
+            <!-- Question 3: What are the benefits? -->
+            <div class="faq-item rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 overflow-hidden shadow-sm transition hover:shadow-md">
+              <button onclick="App.toggleFaq(3)" class="w-full p-4 sm:p-5 text-left flex items-center justify-between font-bold text-slate-800 dark:text-white focus:outline-none">
+                <span class="flex items-center space-x-3 text-base">
+                  <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-sm font-black">3</span>
+                  <span>What are the benefits of managing pocket money?</span>
+                </span>
+                <svg id="faq-arrow-3" class="w-5 h-5 text-slate-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="faq-answer-3" class="hidden px-5 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60">
+                Major benefits include:
+                <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                  <li><strong>Self-Reliance:</strong> You can buy your own favorite books, games, or gifts without relying on parents for every small item.</li>
+                  <li><strong>Goal Achievement:</strong> Big goals (like a ₹3,000 bicycle or smartwatch) become completely reachable through consistent micro-savings.</li>
+                  <li><strong>Stress-Free Emergencies:</strong> Having a ₹100 emergency buffer protects you when unexpected school needs or travel requirements occur.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Question 4: How does the 40-40-10-10 rule work? -->
+            <div class="faq-item rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 overflow-hidden shadow-sm transition hover:shadow-md">
+              <button onclick="App.toggleFaq(4)" class="w-full p-4 sm:p-5 text-left flex items-center justify-between font-bold text-slate-800 dark:text-white focus:outline-none">
+                <span class="flex items-center space-x-3 text-base">
+                  <span class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center text-sm font-black">4</span>
+                  <span>How does the 40-40-10-10 rule work for pocket money?</span>
+                </span>
+                <svg id="faq-arrow-4" class="w-5 h-5 text-slate-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="faq-answer-4" class="hidden px-5 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60">
+                On ₹1000 pocket money:
+                40% (₹400) goes into your Savings Piggy Bank; 40% (₹400) is allocated for daily necessities like canteen and school needs; 10% (₹100) is invested in books, skills, or sports tools; and 10% (₹100) is kept for community kindness, birthday treats, or donations.
+              </div>
+            </div>
+
+            <!-- Question 5: How can I stop impulse spending? -->
+            <div class="faq-item rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 overflow-hidden shadow-sm transition hover:shadow-md">
+              <button onclick="App.toggleFaq(5)" class="w-full p-4 sm:p-5 text-left flex items-center justify-between font-bold text-slate-800 dark:text-white focus:outline-none">
+                <span class="flex items-center space-x-3 text-base">
+                  <span class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-sm font-black">5</span>
+                  <span>How can I avoid impulsive spending on snacks or gaming?</span>
+                </span>
+                <svg id="faq-arrow-5" class="w-5 h-5 text-slate-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="faq-answer-5" class="hidden px-5 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60">
+                Use the <strong>24-Hour Cooling Off Rule</strong>! Whenever you see an impulse snack or tempting digital item, tell yourself you will buy it tomorrow if you still want it. 8 out of 10 times, the emotional impulse disappears and you save your cash.
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Mascot Side Banner & Ask Us Action -->
+          <div class="lg:col-span-4 flex flex-col justify-between p-6 rounded-3xl bg-gradient-to-b from-blue-50/80 to-teal-50/80 dark:from-slate-800 dark:to-slate-800/50 border border-blue-100 dark:border-slate-700 text-center">
+            
+            <div>
+              <div class="w-24 h-24 mx-auto mb-4">
+                <svg viewBox="0 0 220 130" class="w-full h-full">
+                  <use href="#jar-signpost-mascot-def" />
+                </svg>
+              </div>
+
+              <h4 class="text-lg font-bold text-slate-900 dark:text-white">Have a specific question?</h4>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                Our student financial mentors are always ready to answer your questions about savings, allowances, and banking basics.
+              </p>
+            </div>
+
+            <div class="mt-6 space-y-2">
+              <button onclick="App.switchView('contact')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition">
+                Ask Us a Question ✉️
+              </button>
+              <button onclick="App.switchView('blog')" class="w-full py-2.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-600 hover:bg-slate-50 transition">
+                Browse Money Blog 📚
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 6: OUR TEAM (ABOUT US)                -->
+    <!-- ========================================== -->
+    <section id="view-team" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold mb-1">
+            <span>👥 About Our Mission</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">Our Team & Vision</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">The passionate educators, youth advocates, and designers behind the platform</p>
+        </div>
+        <button onclick="App.switchView('contact')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm shadow-md transition">
+          Get in Touch With Us →
+        </button>
+      </div>
+
+      <!-- Main Team & Mission Card (Matching Middle-Right Screenshot) -->
+      <div class="card-glass rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Left: Team Member Circular Avatars (Cluster Layout Matching Screenshot) -->
+          <div class="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-slate-50/70 dark:bg-slate-800/60 rounded-3xl border border-slate-100 dark:border-slate-700">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-6">Founding Mentors & Designers</h4>
+            
+            <!-- Circular Avatars Grid -->
+            <div class="grid grid-cols-3 gap-5 max-w-xs">
+              
+              <!-- Avatar 1 -->
+              <div class="flex flex-col items-center group cursor-pointer" onclick="toast.show('Rohan Sharma: Founder & Student Lead', 'info')">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-teal-400 p-1 shadow-md group-hover:scale-110 transition transform">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-2xl font-bold">
+                    👦
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white mt-1.5">Rohan</span>
+                <span class="text-[10px] text-slate-400">Founder</span>
+              </div>
+
+              <!-- Avatar 2 -->
+              <div class="flex flex-col items-center group cursor-pointer" onclick="toast.show('Priya Verma: Financial Literacy Coach', 'info')">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 p-1 shadow-md group-hover:scale-110 transition transform">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-2xl font-bold">
+                    👩
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white mt-1.5">Priya</span>
+                <span class="text-[10px] text-slate-400">Mentor</span>
+              </div>
+
+              <!-- Avatar 3 -->
+              <div class="flex flex-col items-center group cursor-pointer" onclick="toast.show('Aarav Patel: Lead Platform Engineer', 'info')">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 p-1 shadow-md group-hover:scale-110 transition transform">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-2xl font-bold">
+                    👨‍💻
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white mt-1.5">Aarav</span>
+                <span class="text-[10px] text-slate-400">Tech Lead</span>
+              </div>
+
+              <!-- Avatar 4 -->
+              <div class="flex flex-col items-center group cursor-pointer" onclick="toast.show('Ananya Sen: Mascot & Gamification Designer', 'info')">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-400 p-1 shadow-md group-hover:scale-110 transition transform">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-2xl font-bold">
+                    🎨
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white mt-1.5">Ananya</span>
+                <span class="text-[10px] text-slate-400">UI & Art</span>
+              </div>
+
+              <!-- Avatar 5 -->
+              <div class="flex flex-col items-center group cursor-pointer" onclick="toast.show('Vikram Rao: Youth Counselor', 'info')">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-orange-400 p-1 shadow-md group-hover:scale-110 transition transform">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-2xl font-bold">
+                    🧑‍🏫
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white mt-1.5">Vikram</span>
+                <span class="text-[10px] text-slate-400">Counselor</span>
+              </div>
+
+              <!-- Avatar 6 -->
+              <div class="flex flex-col items-center group cursor-pointer" onclick="toast.show('Meera Joshi: Community Manager', 'info')">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-400 p-1 shadow-md group-hover:scale-110 transition transform">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-2xl font-bold">
+                    👧
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white mt-1.5">Meera</span>
+                <span class="text-[10px] text-slate-400">Community</span>
+              </div>
+
+            </div>
+
+            <p class="text-[11px] text-slate-400 mt-4 text-center">Tap any member to learn more about their background</p>
+          </div>
+
+          <!-- Right: Vision & Benefits Cards (Matching Screenshot) -->
+          <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Vision Card -->
+            <div class="p-6 rounded-3xl bg-blue-50/70 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700">
+              <div class="flex items-center space-x-2 text-blue-600 dark:text-sky-400 font-extrabold text-xs uppercase tracking-wider mb-2">
+                <span>🌟 Our Core Vision</span>
+              </div>
+              <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white font-display mb-2">
+                "Every Rupee Saved Today Builds a Better Tomorrow"
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Our team is behind the pocket money management app to bring financial education into everyday youth culture. We believe financial independence is not reserved for adults—it begins with the very first ₹10 coin a child receives.
+              </p>
+            </div>
+
+            <!-- Benefits Card with Trophy -->
+            <div class="p-6 rounded-3xl bg-emerald-50/70 dark:bg-slate-800/80 border border-emerald-100 dark:border-slate-700">
+              <div class="flex items-center space-x-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center text-xl shadow-sm">
+                  🏆
+                </div>
+                <div>
+                  <h4 class="text-lg font-bold text-slate-900 dark:text-white">Life-Changing Benefits</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Responsibility, Discipline & Goal Clarity</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs font-semibold">
+                <div class="p-3 rounded-xl bg-white dark:bg-slate-700/60 shadow-sm border border-slate-100 dark:border-slate-600">
+                  <span class="text-emerald-500 font-black">01. Discipline</span>
+                  <p class="text-slate-500 dark:text-slate-300 font-normal mt-0.5">Control urges and delay gratification.</p>
+                </div>
+                <div class="p-3 rounded-xl bg-white dark:bg-slate-700/60 shadow-sm border border-slate-100 dark:border-slate-600">
+                  <span class="text-blue-500 font-black">02. Less Stress</span>
+                  <p class="text-slate-500 dark:text-slate-300 font-normal mt-0.5">Never run out of money mid-month.</p>
+                </div>
+                <div class="p-3 rounded-xl bg-white dark:bg-slate-700/60 shadow-sm border border-slate-100 dark:border-slate-600">
+                  <span class="text-purple-500 font-black">03. Achieve Goals</span>
+                  <p class="text-slate-500 dark:text-slate-300 font-normal mt-0.5">Buy dream gadgets with pride.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 7: CONTACT US                         -->
+    <!-- ========================================== -->
+    <section id="view-contact" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 text-xs font-bold mb-1">
+            <span>✉️ Connect With Us</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">Contact Us</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">We'd love to hear from savers, parents, teachers, and schools!</p>
+        </div>
+      </div>
+
+      <!-- Main Contact Card (Matching Bottom-Left Screenshot) -->
+      <div class="card-glass rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          
+          <!-- Left Column: Send Us A Message Text, Mascot & Social Links -->
+          <div class="lg:col-span-5 space-y-6 flex flex-col justify-between">
+            
+            <div>
+              <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white font-display">Send Us a Message</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                Send us a message regarding the pocket money management app, inbox about our platform, school workshops, or share feedback on new features!
+              </p>
+
+              <!-- Mascot Graphic (Money Jar Holding Signpost) -->
+              <div class="my-6 p-4 rounded-3xl bg-blue-50/50 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700 flex items-center justify-center">
+                <svg viewBox="0 0 220 130" class="w-48 h-32">
+                  <use href="#jar-signpost-mascot-def" />
+                </svg>
+              </div>
+
+              <!-- Contact Information Quick Pills -->
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center space-x-2.5 text-slate-700 dark:text-slate-300">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 flex items-center justify-center text-xs">📧</span>
+                  <span class="font-bold">support@pocketmoneymanager.com</span>
+                </div>
+                <div class="flex items-center space-x-2.5 text-slate-700 dark:text-slate-300">
+                  <span class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center text-xs">💬</span>
+                  <span class="font-bold">WhatsApp Community: +91 98765 43210</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Media Icons (With Real Safe URLs in New Tab) -->
+            <div class="pt-6 border-t border-slate-100 dark:border-slate-700/60">
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Social Media Us</p>
+              <div class="flex items-center space-x-3">
+                <!-- Twitter / X -->
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-sky-500 hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition shadow-sm hover:scale-105" title="Twitter / X">
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <!-- Facebook -->
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition shadow-sm hover:scale-105" title="Facebook">
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <!-- LinkedIn -->
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-700 hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition shadow-sm hover:scale-105" title="LinkedIn">
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </a>
+                <!-- YouTube -->
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-red-600 hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition shadow-sm hover:scale-105" title="YouTube">
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- Instagram -->
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-pink-600 hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition shadow-sm hover:scale-105" title="Instagram">
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Interactive Contact Form -->
+          <div class="lg:col-span-7 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-md">
+            
+            <!-- Inline Success Alert (Appears upon submit) -->
+            <div id="contact-success-alert" class="hidden mb-6 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 flex items-center space-x-3">
+              <svg class="w-6 h-6 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <div>
+                <p class="font-extrabold text-sm">Message Sent Successfully! 🎉</p>
+                <p class="text-xs">We received your note and will get back to you within 24 hours.</p>
+              </div>
+            </div>
+
+            <form id="contact-form" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5" for="contact-name">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="contact-name"
+                  required
+                  placeholder="Your full name"
+                  class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5" for="contact-email">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="contact-email"
+                  required
+                  placeholder="your.email@example.com"
+                  class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5" for="contact-topic">
+                  Topic / Category
+                </label>
+                <select id="contact-topic" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white text-sm">
+                  <option value="General Question">General Question about Pocket Money</option>
+                  <option value="Challenge Feedback">30-Day Challenge Feedback</option>
+                  <option value="School Workshop">School & Classroom Workshop Request</option>
+                  <option value="Feature Suggestion">Feature Suggestion</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5" for="contact-message">
+                  Message *
+                </label>
+                <textarea
+                  id="contact-message"
+                  required
+                  rows="4"
+                  placeholder="Tell us about your pocket money experience or questions..."
+                  class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white text-sm"
+                ></textarea>
+              </div>
+
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-extrabold text-base shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
+                >
+                  <span>Submit Message</span>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </button>
+              </div>
+            </form>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 8: USER PROFILE & SETTINGS            -->
+    <!-- ========================================== -->
+    <section id="view-profile" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-sky-300 text-xs font-bold mb-1">
+            <span>⚙️ Account & Preferences</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">User Profile & Settings</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Personalize your pocket money targets, notification rules, and theme</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="App.exportUserData()" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-bold text-sm shadow-sm hover:bg-slate-50 transition">
+            📁 Export Data (JSON)
+          </button>
+          <button onclick="App.resetAllAppData()" class="px-4 py-2 rounded-xl text-rose-600 dark:text-rose-400 font-bold text-sm hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
+            Reset All
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile & Settings Cards Grid (Matching Bottom-Middle Screenshot) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Card: User Identity & Mascots -->
+        <div class="lg:col-span-5">
+          <div class="card-glass rounded-3xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden flex flex-col justify-between h-full">
+            
+            <div>
+              <!-- Big Avatar -->
+              <div class="relative w-28 h-28 mx-auto mb-4">
+                <div class="w-full h-full rounded-full bg-gradient-to-tr from-blue-500 via-teal-400 to-emerald-400 p-1.5 shadow-xl">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-5xl">
+                    👦
+                  </div>
+                </div>
+                <span class="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-800 flex items-center justify-center text-white text-xs font-bold" title="Active Saver">
+                  ✓
+                </span>
+              </div>
+
+              <!-- Name & Grade -->
+              <h3 id="profile-display-name" class="text-2xl font-extrabold text-slate-900 dark:text-white font-display">Rohan</h3>
+              <p id="profile-full-name" class="text-xs text-slate-500 dark:text-slate-400 font-medium">Rohan Sharma • 10th Standard</p>
+
+              <!-- Target Milestone -->
+              <div class="mt-4 p-3 rounded-2xl bg-slate-50 dark:bg-slate-700/60 border border-slate-100 dark:border-slate-600 text-left">
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="text-slate-400 font-semibold uppercase">Dream Goal</span>
+                  <span id="profile-goal-amount" class="font-bold text-blue-600 dark:text-sky-400">Target: ₹3,000</span>
+                </div>
+                <p id="profile-goal-name" class="text-sm font-bold text-slate-800 dark:text-white">New Sports Bicycle & Gear</p>
+              </div>
+
+              <!-- Mascot Flanked Illustration (Matching Screenshot Bottom-Middle) -->
+              <div class="flex items-center justify-center space-x-6 my-6 py-2">
+                <!-- Piggy Mascot -->
+                <div class="flex flex-col items-center">
+                  <svg viewBox="0 0 130 115" class="w-14 h-14">
+                    <use href="#piggy-mascot-def" />
+                  </svg>
+                  <span class="text-[10px] font-bold text-pink-500 mt-1">Penny</span>
+                </div>
+
+                <span class="text-slate-300 dark:text-slate-600 font-bold text-lg">&amp;</span>
+
+                <!-- Jar Mascot -->
+                <div class="flex flex-col items-center">
+                  <svg viewBox="0 0 220 130" class="w-20 h-14">
+                    <use href="#jar-signpost-mascot-def" />
+                  </svg>
+                  <span class="text-[10px] font-bold text-teal-500 mt-1">Jarvy</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit Profile & Learn More Buttons -->
+            <div class="space-y-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
+              <button onclick="App.openEditProfileModal()" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition">
+                Edit Profile
+              </button>
+              <button onclick="App.switchView('team')" class="text-xs font-semibold text-slate-500 hover:text-blue-600 dark:hover:text-sky-400 transition">
+                Learn more about our team →
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right Card: Profile Settings, Savings Balance & Toggles -->
+        <div class="lg:col-span-7">
+          <div class="card-glass rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+            
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700/60">
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Profile Settings</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Manage savings balance and functional switches</p>
+              </div>
+              <button onclick="App.openEditProfileModal()" class="px-4 py-2 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-sky-400 hover:bg-blue-100 font-bold text-xs transition">
+                Edit Profile
+              </button>
+            </div>
+
+            <!-- Current Savings Balance Box (Matching Screenshot: Current Savings: ₹1000) -->
+            <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg flex items-center justify-between">
+              <div>
+                <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-100">Current Savings Balance</p>
+                <h4 id="profile-current-savings" class="text-3xl sm:text-4xl font-black font-display mt-0.5">₹1,000</h4>
+                <p class="text-xs text-emerald-100 mt-1">Monthly Pocket Allowance: <span id="profile-pocket-money" class="font-bold">₹1,000</span></p>
+              </div>
+              <div class="flex flex-col space-y-2">
+                <button onclick="App.addQuickSavings()" class="px-4 py-2 rounded-xl bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-xs shadow transition whitespace-nowrap">
+                  + Add Deposit
+                </button>
+                <button onclick="App.switchView('dashboard')" class="px-4 py-1.5 rounded-xl bg-emerald-700/50 hover:bg-emerald-700 text-white font-semibold text-[11px] transition text-center">
+                  Analytics
+                </button>
+              </div>
+            </div>
+
+            <!-- Working Interactive Toggles (Zero Dead Buttons) -->
+            <div class="space-y-4 pt-2">
+              
+              <!-- Toggle 1: Notifications -->
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center text-lg">
+                    🔔
+                  </div>
+                  <div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white">Notifications</h5>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Receive daily 30-day savings reminders & tips</p>
+                  </div>
+                </div>
+                
+                <!-- Toggle Switch -->
+                <button
+                  id="profile-notif-btn"
+                  role="switch"
+                  aria-checked="true"
+                  class="relative inline-flex flex-shrink-0 h-7 w-13 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none"
+                  style="width: 52px;"
+                >
+                  <span id="profile-notif-bg" class="toggle-switch-bg absolute inset-0 rounded-full bg-emerald-500"></span>
+                  <span id="profile-notif-knob" class="toggle-switch-knob relative inline-block h-6 w-6 rounded-full bg-white shadow transform translate-x-6"></span>
+                </button>
+              </div>
+
+              <!-- Toggle 2: Dark Mode (Strict Requirement: alters the app's color scheme) -->
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 flex items-center justify-center text-lg">
+                    🌙
+                  </div>
+                  <div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white">Dark Mode</h5>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Shift color palette to sleek night mode</p>
+                  </div>
+                </div>
+
+                <!-- Toggle Switch -->
+                <button
+                  id="profile-dark-btn"
+                  role="switch"
+                  aria-checked="false"
+                  class="relative inline-flex flex-shrink-0 h-7 w-13 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none"
+                  style="width: 52px;"
+                >
+                  <span id="profile-dark-bg" class="toggle-switch-bg absolute inset-0 rounded-full bg-slate-300"></span>
+                  <span id="profile-dark-knob" class="toggle-switch-knob relative inline-block h-6 w-6 rounded-full bg-white shadow transform translate-x-0"></span>
+                </button>
+              </div>
+
+              <!-- Toggle 3: Sound Effects (Web Audio Synthesizer) -->
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-300 flex items-center justify-center text-lg">
+                    🎵
+                  </div>
+                  <div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white">Coin & Fanfare Audio</h5>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Play pleasant chimes on coin deposits & clicks</p>
+                  </div>
+                </div>
+
+                <button
+                  id="profile-sound-btn"
+                  role="switch"
+                  aria-checked="true"
+                  class="relative inline-flex flex-shrink-0 h-7 w-13 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none"
+                  style="width: 52px;"
+                >
+                  <span id="profile-sound-bg" class="toggle-switch-bg absolute inset-0 rounded-full bg-blue-600"></span>
+                  <span id="profile-sound-knob" class="toggle-switch-knob relative inline-block h-6 w-6 rounded-full bg-white shadow transform translate-x-6"></span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 9: BLOG / RESOURCES                   -->
+    <!-- ========================================== -->
+    <section id="view-blog" class="hidden transition-opacity duration-300">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 text-xs font-bold mb-1">
+            <span>📚 Financial Wisdom & Guides</span>
+          </div>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display">Blog & Resources</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Practical guides on saving hacks, avoiding traps, and hitting goals</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-slate-400 font-semibold">3 Articles Available</span>
+        </div>
+      </div>
+
+      <!-- 3 Article Cards Grid (Directly Matching Bottom-Right Screenshot) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Card 1: Top Saving Tips (Calculator Illustration) -->
+        <div class="card-glass rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:shadow-2xl transition transform hover:-translate-y-1">
+          <div>
+            <!-- Article Thumbnail (Calculator Icon) -->
+            <div class="h-44 rounded-2xl bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center p-6 shadow-inner relative overflow-hidden mb-5">
+              <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/20 rounded-full blur-xl"></div>
+              
+              <!-- Calculator SVG Illustration -->
+              <div class="w-20 h-28 bg-slate-900 text-white rounded-2xl p-2.5 shadow-2xl border border-white/30 flex flex-col justify-between">
+                <div class="w-full bg-emerald-400/90 text-slate-900 text-right px-2 py-1 rounded font-mono font-bold text-xs">
+                  ₹ 1,000
+                </div>
+                <div class="grid grid-cols-3 gap-1 text-[10px] text-center font-bold">
+                  <span class="bg-slate-800 p-1 rounded">7</span>
+                  <span class="bg-slate-800 p-1 rounded">8</span>
+                  <span class="bg-slate-800 p-1 rounded">9</span>
+                  <span class="bg-slate-800 p-1 rounded">4</span>
+                  <span class="bg-slate-800 p-1 rounded">5</span>
+                  <span class="bg-slate-800 p-1 rounded">6</span>
+                  <span class="bg-amber-500 text-slate-900 p-1 rounded">+</span>
+                  <span class="bg-emerald-500 text-slate-900 p-1 rounded">=</span>
+                  <span class="bg-blue-500 p-1 rounded">₹</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span class="font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">Hacks & Tricks</span>
+              <span>4 min read</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white mb-2 font-display">
+              Top Saving Tips
+            </h3>
+
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+              Master the 24-hour cooling rule, learn to pack smart school canteen alternatives, and discover how saving ₹20 a day adds up to ₹7,200 annually!
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+            <button onclick="App.expandBlogModal(1)" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow transition">
+              Read More
+            </button>
+            <div class="flex items-center space-x-3 text-slate-400 text-xs">
+              <button onclick="App.likeArticle(1)" class="flex items-center space-x-1 hover:text-rose-500 transition">
+                <span>❤️</span>
+                <span id="card-likes-1">42</span>
+              </button>
+              <button id="card-bookmark-1" onclick="App.bookmarkArticle(1)" class="hover:text-amber-500 transition text-amber-500">
+                🔖
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Things to Avoid (Warning Sign Illustration) -->
+        <div class="card-glass rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:shadow-2xl transition transform hover:-translate-y-1">
+          <div>
+            <!-- Article Thumbnail (Warning Sign Icon) -->
+            <div class="h-44 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center p-6 shadow-inner relative overflow-hidden mb-5">
+              <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/20 rounded-full blur-xl"></div>
+              
+              <!-- Warning Triangle SVG -->
+              <svg viewBox="0 0 100 90" class="w-24 h-24 filter drop-shadow-lg">
+                <polygon points="50,10 90,80 10,80" fill="#FEE2E2" stroke="#EF4444" stroke-width="6" stroke-linejoin="round"/>
+                <text x="50" y="65" text-anchor="middle" font-size="38" font-weight="900" fill="#DC2626" font-family="sans-serif">!</text>
+              </svg>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span class="font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Pitfalls</span>
+              <span>5 min read</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white mb-2 font-display">
+              Things to Avoid
+            </h3>
+
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+              Beware of peer pressure treats, virtual gaming micro-transactions, loaning money without tracking, and leaving zero emergency buffer for bicycle punctures.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+            <button onclick="App.expandBlogModal(2)" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow transition">
+              Read More
+            </button>
+            <div class="flex items-center space-x-3 text-slate-400 text-xs">
+              <button onclick="App.likeArticle(2)" class="flex items-center space-x-1 hover:text-rose-500 transition">
+                <span>❤️</span>
+                <span id="card-likes-2">35</span>
+              </button>
+              <button id="card-bookmark-2" onclick="App.bookmarkArticle(2)" class="hover:text-amber-500 transition">
+                🔖
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: How to Set Saving Goals (Target & Clipboard Illustration) -->
+        <div class="card-glass rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:shadow-2xl transition transform hover:-translate-y-1">
+          <div>
+            <!-- Article Thumbnail (Target & Arrow Clipboard) -->
+            <div class="h-44 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center p-6 shadow-inner relative overflow-hidden mb-5">
+              <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/20 rounded-full blur-xl"></div>
+              
+              <!-- Clipboard & Bullseye Target SVG -->
+              <div class="relative w-24 h-28 bg-white dark:bg-slate-900 rounded-2xl p-2 shadow-2xl border border-white/40 flex flex-col items-center justify-center">
+                <div class="w-10 h-3 bg-slate-300 dark:bg-slate-700 rounded-full -mt-4 mb-2"></div>
+                <div class="relative w-14 h-14 flex items-center justify-center">
+                  <circle cx="28" cy="28" r="26" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
+                  <circle cx="28" cy="28" r="18" fill="#FFFFFF" stroke="#EF4444" stroke-width="2"/>
+                  <circle cx="28" cy="28" r="10" fill="#EF4444"/>
+                  <circle cx="28" cy="28" r="4" fill="#FFFFFF"/>
+                </div>
+                <div class="w-16 h-1.5 bg-emerald-400 rounded-full mt-2"></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Goal Setting</span>
+              <span>6 min read</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white mb-2 font-display">
+              How to Set Saving Goals
+            </h3>
+
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+              Turn vague wishes into realistic SMART targets. How to save for your next bicycle, books, or gifts with visual milestone tracking!
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+            <button onclick="App.expandBlogModal(3)" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
+              Read More
+            </button>
+            <div class="flex items-center space-x-3 text-slate-400 text-xs">
+              <button onclick="App.likeArticle(3)" class="flex items-center space-x-1 hover:text-rose-500 transition">
+                <span>❤️</span>
+                <span id="card-likes-3">58</span>
+              </button>
+              <button id="card-bookmark-3" onclick="App.bookmarkArticle(3)" class="hover:text-amber-500 transition text-amber-500">
+                🔖
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS SECTION                             -->
+  <!-- ========================================== -->
+
+  <!-- Modal 1: Add Transaction Modal -->
+  <div id="transaction-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-white/20">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-slate-700">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+          <span>🪙</span>
+          <span>Add New Transaction</span>
+        </h3>
+        <button onclick="App.closeAddTransactionModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="add-transaction-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="tx-title">
+            Description / Item *
+          </label>
+          <input
+            id="tx-title"
+            type="text"
+            required
+            placeholder="e.g., Geometry Box, Canteen Sandwich"
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="tx-amount">
+              Amount (₹) *
+            </label>
+            <input
+              id="tx-amount"
+              type="number"
+              min="1"
+              required
+              placeholder="e.g., 50"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white font-bold"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="tx-type">
+              Type
+            </label>
+            <select id="tx-type" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white">
+              <option value="expense">Expense (-₹)</option>
+              <option value="income">Income (+₹)</option>
+              <option value="savings">Savings Deposit</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="tx-category">
+            Category
+          </label>
+          <select id="tx-category" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white">
+            <option value="Food">Food & Canteen</option>
+            <option value="Entertainment">Entertainment & Games</option>
+            <option value="School Supplies">School Supplies & Books</option>
+            <option value="Savings">Savings Deposit</option>
+            <option value="Income">Pocket Money / Gifts</option>
+            <option value="Emergency">Emergency Buffer</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-3">
+          <button type="button" onclick="App.closeAddTransactionModal()" class="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md transition">
+            Save Transaction
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Profile Modal -->
+  <div id="profile-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-white/20">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-slate-700">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+          <span>👤</span>
+          <span>Edit User Profile</span>
+        </h3>
+        <button onclick="App.closeEditProfileModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="edit-profile-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="edit-name">
+            First / Display Name *
+          </label>
+          <input
+            id="edit-name"
+            type="text"
+            required
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white font-semibold"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="edit-fullname">
+            Full Name & Class
+          </label>
+          <input
+            id="edit-fullname"
+            type="text"
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="edit-pocket">
+              Monthly Allowance (₹) *
+            </label>
+            <input
+              id="edit-pocket"
+              type="number"
+              min="100"
+              required
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white font-bold"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="edit-savings">
+              Current Savings (₹) *
+            </label>
+            <input
+              id="edit-savings"
+              type="number"
+              min="0"
+              required
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white font-bold"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="edit-goal">
+              Dream Goal Name
+            </label>
+            <input
+              id="edit-goal"
+              type="text"
+              placeholder="e.g. New Bicycle"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1" for="edit-goalamt">
+              Target Cost (₹)
+            </label>
+            <input
+              id="edit-goalamt"
+              type="number"
+              min="100"
+              placeholder="3000"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-4">
+          <button type="button" onclick="App.closeEditProfileModal()" class="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md transition">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Blog Article Reader Modal -->
+  <div id="blog-read-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-white/20 max-h-[85vh] overflow-y-auto">
+      <div id="blog-modal-content">
+        <!-- Rendered dynamically by App.expandBlogModal() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- App JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
